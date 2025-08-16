@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,19 +10,20 @@ public class Player : MonoBehaviour
     [SerializeField]
     private Camera _camera;
 
-
     private Rigidbody _rigidBody;
 
     private void Awake()
     {
         //inisialisasi/akses komponent _rigidBody gunakan GetComponent<>()
         _rigidBody = GetComponent<Rigidbody>();
-    }
 
-    // Start is called before the first frame update
-    void Start()
-    {
+        HideAndLockCursor();
+    }
         
+    private void HideAndLockCursor()
+    {
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     // Update is called once per frame
