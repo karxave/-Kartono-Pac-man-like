@@ -1,0 +1,7 @@
+Creep-Game/Library/*
+Creep-Game/Logs/*
+Creep-Game/Temp/*
+
+.vsconfig
+*.sln
+
