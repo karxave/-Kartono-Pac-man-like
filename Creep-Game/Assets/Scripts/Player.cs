@@ -46,7 +46,15 @@ public class Player : MonoBehaviour
 
         //akses komponen Rigidbody bagian velocity utk menggerakan Player
         // karena physical gunakan Time.deltaTime
-        _rigidBody.velocity = movementDirection * _speed * Time.deltaTime;
+        //_rigidBody.velocity = movementDirection * _speed * Time.deltaTime;
+        // jangan pake velocity karena sumbu y akan terpengaruh ( jatuhnya player lambat)
+        // pake AddForce
+        //     myRigidbody.AddForce(new Vector3(0, 10, 0)); // Correct!
+        // This line of code calls the AddForce method on the myRigidbody object,
+        // providing a Vector3 representing an upward force.
+        // You can also specify a ForceMode as a second argument for different types of force application
+        // (e.g., ForceMode.Impulse, ForceMode.VelocityChange)
+        _rigidBody.AddForce (movementDirection * _speed * Time.deltaTime );
             
     }
 }
