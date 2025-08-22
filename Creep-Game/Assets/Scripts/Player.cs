@@ -45,8 +45,8 @@ public class Player : MonoBehaviour
         Vector3 movementDirection = horizontalDirection + verticalDirection;
 
         //akses komponen Rigidbody bagian velocity utk menggerakan Player
-        // karena physical gunakan Time.fixedDeltaTime
-        _rigidBody.velocity = movementDirection * _speed * Time.fixedDeltaTime;
+        // karena physical gunakan Time.deltaTime
+        _rigidBody.velocity = movementDirection * _speed * Time.deltaTime;
             
     }
 }
