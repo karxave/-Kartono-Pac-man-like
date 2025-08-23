@@ -16,7 +16,7 @@ public class Pickable : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Player")) 
         { 
-            Debug.Log("Picked up : " + variablePickabletype);
+            // Debug.Log("Picked up : " + variablePickabletype);
             // panggil method OnPickablePicked yang ada di script PickableManager
             OnPickedAction(this);
             Destroy(gameObject);
