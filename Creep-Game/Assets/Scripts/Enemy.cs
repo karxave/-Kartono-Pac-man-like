@@ -15,6 +15,7 @@ public class Enemy : MonoBehaviour
 
     private void Awake()
     {
+        // State awal enemy adalah patrol state.
         _currentState = PatrolState;
         _currentState.EnterState(this);
 

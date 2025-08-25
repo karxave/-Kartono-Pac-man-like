@@ -1,60 +1,46 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody))]
 public class Player : MonoBehaviour
 {
-    [SerializeField]
-    private float _speed;
-    [SerializeField]
-    private Camera _camera;
+    [SerializeField] private float _speed = 5f;
+    [SerializeField] private Camera _camera;
 
     private Rigidbody _rigidBody;
 
     private void Awake()
     {
-        //inisialisasi/akses komponent _rigidBody gunakan GetComponent<>()
         _rigidBody = GetComponent<Rigidbody>();
-
-        HideAndLockCursor();
-    }
-        
-    private void HideAndLockCursor()
-    {
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
+        if (_camera == null)
+        {
+            _camera = Camera.main;
+        }
     }
 
-    // Update is called once per frame
-    void Update()
+    private void FixedUpdate()
     {
-        float horizontal = Input.GetAxis("Horizontal");
-        float vertical = Input.GetAxis("Vertical");
+        // Get inputs
+        float horizontal = Input.GetAxisRaw("Horizontal");
+        float vertical = Input.GetAxisRaw("Vertical");
 
-        //atur  pergerakan sesuai dengan arah depan kamera
-        Vector3 horizontalDirection = horizontal * _camera.transform.right;  // sumbu x
-        Vector3 verticalDirection = vertical * _camera.transform.forward; // sumbu z
-        verticalDirection.y = 0;
-        horizontalDirection.y = 0;
+        // Camera-relative directions
+        Vector3 forward = _camera.transform.forward;
+        Vector3 right = _camera.transform.right;
 
-        // definisikan arah pergerakan , simpan di variabel movementDirection
-        //Vector3 movementDirection = new Vector3(horizontal, 0, vertical);
-        // dengan sudah diaturnya kamera,
-        // maka movementDirection = horizontalDirection + verticalDirection
-        Vector3 movementDirection = horizontalDirection + verticalDirection;
+        // Flatten to avoid moving up/down with camera tilt
+        forward.y = 0;
+        right.y = 0;
+        forward.Normalize();
+        right.Normalize();
 
-        //akses komponen Rigidbody bagian velocity utk menggerakan Player
-        // karena physical gunakan Time.deltaTime
-        //_rigidBody.velocity = movementDirection * _speed * Time.deltaTime;
-        // jangan pake velocity karena sumbu y akan terpengaruh ( jatuhnya player lambat)
-        // pake AddForce
-        //     myRigidbody.AddForce(new Vector3(0, 10, 0)); // Correct!
-        // This line of code calls the AddForce method on the myRigidbody object,
-        // providing a Vector3 representing an upward force.
-        // You can also specify a ForceMode as a second argument for different types of force application
-        // (e.g., ForceMode.Impulse, ForceMode.VelocityChange)
-        _rigidBody.AddForce (movementDirection * _speed * Time.deltaTime );
-            
+        // Movement direction
+        Vector3 movementDirection = (horizontal * right + vertical * forward).normalized;
+
+        // Preserve Y velocity (gravity, jump, etc.)
+        Vector3 velocity = movementDirection * _speed;
+        velocity.y = _rigidBody.velocity.y;
+
+        // Apply movement
+        _rigidBody.velocity = velocity;
     }
 }
