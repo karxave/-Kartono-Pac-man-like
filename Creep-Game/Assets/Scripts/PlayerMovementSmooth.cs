@@ -18,6 +18,8 @@ public class PlayerMovementSmooth : MonoBehaviour
         {
             _camera = Camera.main;
         }
+
+        HideAndLockCursor();
     }
 
     private void FixedUpdate()
@@ -47,5 +49,11 @@ public class PlayerMovementSmooth : MonoBehaviour
 
         // --- APPLY VELOCITY ---
         _rigidBody.velocity = _currentVelocity;
+    }
+
+    private void HideAndLockCursor()
+    {
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
     }
 }
