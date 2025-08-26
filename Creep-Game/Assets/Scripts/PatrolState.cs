@@ -4,14 +4,50 @@ using UnityEngine;
 
 public class PatrolState : BaseState
 {
+    private bool _isMoving;
+    private Vector3 _destination;
+
     public void EnterState(Enemy enemy)
-    {
-        Debug.Log("Start Patrol ");
+    {   
+        // masuk ke state : EnterState di PatrolState,
+        // jadi buat enemy stop bergerak
+        // enemy tidak bergerak dulu menunggu instruksi berikutnya
+        // instruksi berikutnya terjadi ketika UpdateState
+        _isMoving = false;
     }
 
     public void UpdateState(Enemy enemy)
     {
-        Debug.Log("Patrolling");
+        // cek dulu enemy sedang bergerak atau sedang stop/tidak bergerak
+        if (!_isMoving)
+        {
+            // ternyata enemy sedang stop, jadi buat enemy bergerak lagi
+            _isMoving = true;
+
+            // enemy akan bergerak ke waypoint
+            // tentukan waypoint mana yang akan dituju secara Random/acak
+            int index = UnityEngine.Random.Range(0, enemy.Waypoints.Count);
+
+            // masukan waypoint baru yang dengan transform position sbg destination baru
+            _destination = enemy.Waypoints[index].position;
+
+            // update lagi destination NavMeshAgent
+            enemy.NavMeshAgent.destination = _destination;
+
+        }
+        else
+        {
+            // ternyata enemy sedang bergerak
+            // cek apakah enemy sudah sampai ke waypoint tujuan atau belum
+            // bandingkan jarak antara titik akhir dengan posisi current enemy
+            // jika jaraknya sudah atau kurang dari 0.1 berarti sudah sampe
+            // jika sudah sampe , enemy harus stop moving
+            if (Vector3.Distance(_destination, enemy.transform.position) <= 0.1)
+            {
+                _isMoving = false;
+            }
+
+        }
     }
 
     public void ExitState(Enemy enemy)

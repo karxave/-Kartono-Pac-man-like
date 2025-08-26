@@ -25,6 +25,9 @@ public class Enemy : MonoBehaviour
         _currentState = PatrolState;
         _currentState.EnterState(this);
 
+        // init NavmeshAgent dari gameobject Enemy
+        NavMeshAgent = GetComponent<NavMeshAgent>();
+
     }
 
 
