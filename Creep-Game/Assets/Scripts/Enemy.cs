@@ -8,6 +8,11 @@ public class Enemy : MonoBehaviour
     [SerializeField]
     public List<Transform> Waypoints = new List<Transform>();
 
+    [SerializeField]
+    public float ChaseDistance;
+    [SerializeField]
+    public PlayerMovementSmooth Player;
+
     private BaseState _currentState;
 
     [HideInInspector]
@@ -18,6 +23,14 @@ public class Enemy : MonoBehaviour
     public RetreatState RetreatState = new RetreatState();
     [HideInInspector]
     public NavMeshAgent NavMeshAgent;
+
+    public void SwitchState(BaseState state)
+    {
+        _currentState.ExitState(this);
+        _currentState = state;
+        _currentState.EnterState(this);
+
+    }
 
     private void Awake()
     {

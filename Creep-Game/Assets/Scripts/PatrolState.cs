@@ -18,7 +18,15 @@ public class PatrolState : BaseState
 
     public void UpdateState(Enemy enemy)
     {
-        // cek dulu enemy sedang bergerak atau sedang stop/tidak bergerak
+        //cek  jarak enemy dan player , kalo kurang dari ChaseDistance berarti SwitchState ke ChaseState
+        if (Vector3.Distance(enemy.transform.position, enemy.Player.transform.position) < enemy.ChaseDistance)
+        {
+            enemy.SwitchState(enemy.ChaseState);
+        }
+
+
+
+        // cek juga enemy sedang bergerak atau sedang stop (tidak bergerak)
         if (!_isMoving)
         {
             // ternyata enemy sedang stop, jadi buat enemy bergerak lagi
