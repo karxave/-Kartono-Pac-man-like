@@ -1,12 +1,15 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-public class Player : MonoBehaviour
+public class Player: MonoBehaviour
 {
     [SerializeField] private float _speed = 5f;
+    [SerializeField] private float _acceleration = 10f;   // Higher = faster acceleration
+    [SerializeField] private float _deceleration = 10f;   // Higher = faster stop
     [SerializeField] private Camera _camera;
 
     private Rigidbody _rigidBody;
+    private Vector3 _currentVelocity;
 
     private void Awake()
     {
@@ -15,32 +18,42 @@ public class Player : MonoBehaviour
         {
             _camera = Camera.main;
         }
+
+        HideAndLockCursor();
     }
 
     private void FixedUpdate()
     {
-        // Get inputs
+        // --- INPUT ---
         float horizontal = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
 
-        // Camera-relative directions
+        // --- CAMERA-RELATIVE DIRECTIONS ---
         Vector3 forward = _camera.transform.forward;
         Vector3 right = _camera.transform.right;
-
-        // Flatten to avoid moving up/down with camera tilt
         forward.y = 0;
         right.y = 0;
         forward.Normalize();
         right.Normalize();
 
-        // Movement direction
-        Vector3 movementDirection = (horizontal * right + vertical * forward).normalized;
+        // --- TARGET MOVEMENT DIRECTION ---
+        Vector3 targetDirection = (horizontal * right + vertical * forward).normalized;
+        Vector3 targetVelocity = targetDirection * _speed;
 
-        // Preserve Y velocity (gravity, jump, etc.)
-        Vector3 velocity = movementDirection * _speed;
-        velocity.y = _rigidBody.velocity.y;
+        // --- PRESERVE Y VELOCITY ---
+        targetVelocity.y = _rigidBody.velocity.y;
 
-        // Apply movement
-        _rigidBody.velocity = velocity;
+        // --- SMOOTH ACCEL/DECEL ---
+        float lerpSpeed = (targetDirection.magnitude > 0.1f) ? _acceleration : _deceleration;
+        _currentVelocity = Vector3.Lerp(_rigidBody.velocity, targetVelocity, lerpSpeed * Time.fixedDeltaTime);
+
+        // --- APPLY VELOCITY ---
+        _rigidBody.velocity = _currentVelocity;
+    }
+
+    private void HideAndLockCursor()
+    {
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
     }
 }

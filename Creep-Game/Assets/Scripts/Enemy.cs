@@ -11,7 +11,7 @@ public class Enemy : MonoBehaviour
     [SerializeField]
     public float ChaseDistance;
     [SerializeField]
-    public PlayerMovementSmooth Player;
+    public Player Player;
 
     private BaseState _currentState;
 
@@ -51,4 +51,18 @@ public class Enemy : MonoBehaviour
             _currentState.UpdateState(this);
         }
     }
+
+    public void UpdateState(Enemy enemy)
+    {
+        if (enemy.Player != null)
+        {
+            enemy.NavMeshAgent.destination = enemy.Player.transform.position;
+            if (Vector3.Distance(enemy.transform.position, enemy.Player.transform.position) > enemy.ChaseDistance)
+            {
+                enemy.SwitchState(enemy.PatrolState);
+            }
+        }
+    }
+
+
 }

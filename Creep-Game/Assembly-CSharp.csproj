@@ -64,7 +64,6 @@
     <Compile Include="Assets\Scripts\Enemy.cs" />
     <Compile Include="Assets\Scripts\RetreatState.cs" />
     <Compile Include="Assets\Scripts\ChaseState.cs" />
-    <Compile Include="Assets\Scripts\PlayerMovementSmooth.cs" />
     <Compile Include="Assets\Scripts\BaseState.cs" />
     <Compile Include="Assets\Scripts\PickableManager.cs" />
     <Compile Include="Assets\Scripts\Player.cs" />

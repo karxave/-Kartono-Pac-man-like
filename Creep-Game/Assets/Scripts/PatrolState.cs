@@ -18,6 +18,9 @@ public class PatrolState : BaseState
 
     public void UpdateState(Enemy enemy)
     {
+       
+
+
         //cek  jarak enemy dan player , kalo kurang dari ChaseDistance berarti SwitchState ke ChaseState
         if (Vector3.Distance(enemy.transform.position, enemy.Player.transform.position) < enemy.ChaseDistance)
         {
@@ -36,11 +39,15 @@ public class PatrolState : BaseState
             // tentukan waypoint mana yang akan dituju secara Random/acak
             int index = UnityEngine.Random.Range(0, enemy.Waypoints.Count);
 
+         
             // masukan waypoint baru yang dengan transform position sbg destination baru
             _destination = enemy.Waypoints[index].position;
 
             // update lagi destination NavMeshAgent
-            enemy.NavMeshAgent.destination = _destination;
+            //enemy.NavMeshAgent.destination = _destination;
+
+            enemy.NavMeshAgent.SetDestination(_destination);
+
 
         }
         else
@@ -50,7 +57,7 @@ public class PatrolState : BaseState
             // bandingkan jarak antara titik akhir dengan posisi current enemy
             // jika jaraknya sudah atau kurang dari 0.1 berarti sudah sampe
             // jika sudah sampe , enemy harus stop moving
-            if (Vector3.Distance(_destination, enemy.transform.position) <= 0.1)
+            if (Vector3.Distance(_destination, enemy.transform.position) <= 0.1f)
             {
                 _isMoving = false;
             }
@@ -61,5 +68,6 @@ public class PatrolState : BaseState
     public void ExitState(Enemy enemy)
     {
         Debug.Log("Stop Patrol");
+        
     }
 }
