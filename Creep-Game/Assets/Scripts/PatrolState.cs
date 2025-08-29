@@ -14,6 +14,8 @@ public class PatrolState : BaseState
         // enemy tidak bergerak dulu menunggu instruksi berikutnya
         // instruksi berikutnya terjadi ketika UpdateState
         _isMoving = false;
+
+        Debug.Log("Enter State : Patrol State");
     }
 
     public void UpdateState(Enemy enemy)
@@ -35,6 +37,7 @@ public class PatrolState : BaseState
             // ternyata enemy sedang stop, jadi buat enemy bergerak lagi
             _isMoving = true;
 
+            
             // enemy akan bergerak ke waypoint
             // tentukan waypoint mana yang akan dituju secara Random/acak
             int index = UnityEngine.Random.Range(0, enemy.Waypoints.Count);
@@ -55,7 +58,7 @@ public class PatrolState : BaseState
             // ternyata enemy sedang bergerak
             // cek apakah enemy sudah sampai ke waypoint tujuan atau belum
             // bandingkan jarak antara titik akhir dengan posisi current enemy
-            // jika jaraknya sudah atau kurang dari 0.1 berarti sudah sampe
+            // jika jaraknya sudah atau kurang dari 0.1f berarti sudah sampe
             // jika sudah sampe , enemy harus stop moving
             if (Vector3.Distance(_destination, enemy.transform.position) <= 0.1f)
             {
@@ -66,8 +69,8 @@ public class PatrolState : BaseState
     }
 
     public void ExitState(Enemy enemy)
-    {
-        Debug.Log("Stop Patrol");
+    {   
+        Debug.Log("ExitState : Stop Patrol");
         
     }
 }

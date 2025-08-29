@@ -6,7 +6,7 @@ using UnityEngine;
 public class Pickable : MonoBehaviour
 {
     [SerializeField]
-    public PickableType variablePickabletype;
+    public PickableType Pickabletype;
 
     // Gunakan Action utk menghubungkan method 
     // OnPickablePicked yang ada di script PickableManager

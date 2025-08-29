@@ -43,6 +43,14 @@ public class Enemy : MonoBehaviour
 
     }
 
+    private void Start()
+    {
+        if (Player != null)
+        {
+            Player.OnPowerUpStart += StartRetreating;
+            Player.OnPowerUpStop += StopRetreating;
+        }
+    }
 
     private void Update()
     {
@@ -64,5 +72,14 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    private void StartRetreating()
+    {
+        SwitchState(RetreatState);
+    }
+
+    private void StopRetreating()
+    {
+        SwitchState(PatrolState);
+    }
 
 }
