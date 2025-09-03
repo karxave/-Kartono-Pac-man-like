@@ -24,6 +24,9 @@ public class Enemy : MonoBehaviour
     [HideInInspector]
     public NavMeshAgent NavMeshAgent;
 
+    [HideInInspector]
+    public Animator EnemyAnimator;
+
     public void SwitchState(BaseState state)
     {
         _currentState.ExitState(this);
@@ -34,12 +37,17 @@ public class Enemy : MonoBehaviour
 
     private void Awake()
     {
+        //init Animator 
+        EnemyAnimator = GetComponent<Animator>();
+
         // State awal enemy adalah patrol state.
         _currentState = PatrolState;
         _currentState.EnterState(this);
 
         // init NavmeshAgent dari gameobject Enemy
         NavMeshAgent = GetComponent<NavMeshAgent>();
+
+        
 
     }
 
