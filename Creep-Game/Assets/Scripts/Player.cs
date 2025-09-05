@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using TMPro;
 
 [RequireComponent(typeof(Rigidbody))]
 public class Player: MonoBehaviour
@@ -14,16 +16,29 @@ public class Player: MonoBehaviour
     [SerializeField] private float _deceleration = 10f;   // Higher = faster stop
     [SerializeField] private Camera _camera;
     [SerializeField] private float _powerUpDuration;
+    [SerializeField] private int _healthIntValue;
+    [SerializeField] private TMP_Text _healthText;
+    [SerializeField] private Transform _respawnPoint;
+    [SerializeField] private AudioSource _audioSourceEnemy;
+    [SerializeField] private AudioClip _audioSourceEnemyClip;
+    [SerializeField] private float _delay = 0.01f; // time before loading next scene
+
+    private bool _isPowerUpActive = false;
 
     private Coroutine _powerUpCoroutine;
 
     private Rigidbody _rigidBody;
     private Vector3 _currentVelocity;
+    [SerializeField]
+    private AudioSource _audioSourcePlayer;
 
+    private bool _isHittedByEnemy = false;
 
 
     private void Awake()
     {
+        UpdateUI_HealthText();
+
         _rigidBody = GetComponent<Rigidbody>();
         if (_camera == null)
         {
@@ -85,22 +100,108 @@ public class Player: MonoBehaviour
 
     private IEnumerator StartPowerUp()
     {
+        //set TRUE dulu bool _isPowerUpActive
+        _isPowerUpActive = true;
+
         //Debug.Log("Start PowerUp");
         if (OnPowerUpStart != null)
         {
             OnPowerUpStart();
         }
         
+        // tunggu selama : _powerUpDuration detik
         yield return new WaitForSeconds(_powerUpDuration);
+        // set FAlSE _isPowerUpActive
+        _isPowerUpActive = false;
 
         //Debug.Log("End of PowerUp");
         if (OnPowerUpStop!= null)
         {
             OnPowerUpStop();
         }
-
+               
     }
 
-  
+    
+
+    private void OnCollisionEnter(Collision collisionObject)
+    {
+        // if (_isPowerUpActive)
+        // {   
+        // cek Tag collision apakah tag Enemy
+        //     if (collisionObject.gameObject.CompareTag("Enemy"))
+        //     {
+        // panggil method EnemyIsDead yg ada di script Enemy
+        //         collisionObject.gameObject.GetComponent<Enemy>().EnemyIsDead();
+        //     }
+        // }
+
+        if (_isPowerUpActive && collisionObject.gameObject.CompareTag("Enemy"))
+        {
+           
+            if (_audioSourceEnemyClip != null)
+            {
+                Debug.Log(_audioSourceEnemyClip);
+                AudioSource.PlayClipAtPoint(_audioSourceEnemyClip, transform.position);
+            }
+
+            collisionObject.gameObject.GetComponent<Enemy>().EnemyIsDead();
+
+            Debug.Log("Enemy dies");
+        }
+    }
+
+    private void UpdateUI_HealthText()
+    {
+        Debug.Log("Nilai Health pas mo diupdate :" + _healthIntValue);
+        _healthText.text = "Health : " + _healthIntValue;
+    }
+
+
+    public void PlayerIsDead()
+    {
+
+        if (_isHittedByEnemy) return;
+        _isHittedByEnemy = true;
+        StartCoroutine(ResetDamageFlag());
+
+        Debug.Log("Nilai Health before dikurangi 1 :" + _healthIntValue);
+        _healthIntValue -= 1;
+        Debug.Log("Nilai Health after dikurangi 1 :" + _healthIntValue);
+
+        _audioSourcePlayer.Play();
+
+        if (_healthIntValue > 0)
+        {
+           transform.position = _respawnPoint.position;
+        }
+        else
+        {
+            _healthIntValue = 0;
+            Debug.Log("Game Over -> You lose");
+            //audioSourcePlayer.Play();
+
+            //        Invoke(nameof(LoadNextScene), _delay);
+            SceneManager.LoadScene("LoseScene");
+        }
+
+        UpdateUI_HealthText();
+    }
+
+  //  public void LoadNextScene()
+  //  {
+  //      SceneManager.LoadScene("LoseScene");
+  //  }
+
+    private IEnumerator ResetDamageFlag()
+    {
+        yield return null; // wait one frame
+        _isHittedByEnemy = false;
+    }
+
+    
+
+
+
 
 }

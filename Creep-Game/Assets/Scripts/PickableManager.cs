@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PickableManager : MonoBehaviour
 {
@@ -7,6 +8,10 @@ public class PickableManager : MonoBehaviour
     // dipanggil dengan menggunakan method OnPickablePicked yg ada di script ini
     [SerializeField]
     private Player _player;
+
+    // field berikut dipakai utk mengakses SetMaxScore() di script ScoreManager
+    [SerializeField]
+    private ScoreManager _scoreManager;
 
     private List<Pickable> _pickableList = new List<Pickable>();
 
@@ -32,22 +37,38 @@ public class PickableManager : MonoBehaviour
         }
 
         Debug.Log("Pickable List : " + _pickableList.Count);
+
+        _scoreManager.SetMaxScore(_pickableList.Count);
     }
 
     
     private void OnPickablePicked(Pickable pickable)
     {
-             Debug.Log("Picked : " + pickable );
+             Debug.Log("OnPickablePicked: " + pickable );
         
              _pickableList.Remove(pickable);
+        Debug.Log("will be destroy : " + pickable);
+        Debug.Log("catatan  : " + gameObject);
 
-             Debug.Log("Number of Pickeable  : " + _pickableList.Count);
+            Destroy(pickable.gameObject);
+            
+
+        Debug.Log("after  destroy -- > : " + pickable);
+
+        Debug.Log(" OnPickablePicked - Number of Pickeable  : " + _pickableList.Count);
+
+       
 
         // cek dulu jenis pickablenya apakah power up 
         if (pickable.Pickabletype == PickableType.PowerUp)
         {
             _player?.PickPowerUp();
-            Debug.Log("Number of Pickeable  : " + _pickableList.Count);
+            Debug.Log("Number of Pickeable CHECK powerup  : " + _pickableList.Count);
+        }
+
+        if (_scoreManager != null)
+        {
+            _scoreManager.AddScore(1);
         }
 
 
@@ -55,6 +76,8 @@ public class PickableManager : MonoBehaviour
         {
             Debug.Log("Pickable List : " + _pickableList.Count);
             Debug.Log("Win");
+
+            SceneManager.LoadScene("WinScene");
         }
     }
 }

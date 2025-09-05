@@ -12,6 +12,8 @@ public class Enemy : MonoBehaviour
     public float ChaseDistance;
     [SerializeField]
     public Player Player;
+    [SerializeField]
+    private AudioSource _audioSourceEnemy;
 
     private BaseState _currentState;
 
@@ -90,4 +92,24 @@ public class Enemy : MonoBehaviour
         SwitchState(PatrolState);
     }
 
+    public void EnemyIsDead()
+    {
+        
+        Destroy(gameObject);
+        
+    }
+
+    private void OnCollisionEnter(Collision collisionObject)
+    {
+        if (_currentState != RetreatState)
+        {
+            if (collisionObject.gameObject.CompareTag("Player"))
+            {
+                //_audioSourceEnemy.Play();
+                //_audioSourceEnemy.PlayOneShot(_audioSourceEnemy.clip);
+
+                collisionObject.gameObject.GetComponent<Player>().PlayerIsDead();
+            }
+        }
+    }
 }

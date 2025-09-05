@@ -8,15 +8,24 @@ public class PatrolState : BaseState
     private Vector3 _destination;
 
     public void EnterState(Enemy enemy)
-    {   
+    {
+
         // masuk ke state : EnterState di PatrolState,
         // jadi buat enemy stop bergerak
         // enemy tidak bergerak dulu menunggu instruksi berikutnya
         // instruksi berikutnya terjadi ketika UpdateState
-        _isMoving = false;
+        //     _isMoving = false;
 
-        Debug.Log("Enter State : Patrol State");
-        enemy.EnemyAnimator.SetTrigger("PatrolStateParameter");
+        //     Debug.Log("Enter State : Patrol State");
+
+        //     enemy.EnemyAnimator.SetTrigger("PatrolStateParameter");
+
+        if (enemy.EnemyAnimator != null)
+        {
+            enemy.EnemyAnimator.SetTrigger("PatrolStateParameter");
+        }
+
+
     }
 
     public void UpdateState(Enemy enemy)
