@@ -21,7 +21,7 @@ public class Player: MonoBehaviour
     [SerializeField] private Transform _respawnPoint;
     [SerializeField] private AudioSource _audioSourceEnemy;
     [SerializeField] private AudioClip _audioSourceEnemyClip;
-    [SerializeField] private float _delay = 0.01f; // time before loading next scene
+    [SerializeField] private AudioSource _audioSourcePlayer;
 
     private bool _isPowerUpActive = false;
 
@@ -29,14 +29,19 @@ public class Player: MonoBehaviour
 
     private Rigidbody _rigidBody;
     private Vector3 _currentVelocity;
-    [SerializeField]
-    private AudioSource _audioSourcePlayer;
-
+    
     private bool _isHittedByEnemy = false;
 
+    [Header("Timing")]
+    [SerializeField] private float _pauseDuration = 3f; // how long to pause before loading
+
+    [Header("UI")]
+    [SerializeField] private GameObject _pauseScreen; // assign your pause panel in inspector
 
     private void Awake()
     {
+        
+
         UpdateUI_HealthText();
 
         _rigidBody = GetComponent<Rigidbody>();
@@ -155,6 +160,9 @@ public class Player: MonoBehaviour
     {
         Debug.Log("Nilai Health pas mo diupdate :" + _healthIntValue);
         _healthText.text = "Health : " + _healthIntValue;
+
+        if (_healthIntValue <= 0) { Debug.Log("Game Over -> You lose"); }
+
     }
 
 
@@ -162,12 +170,15 @@ public class Player: MonoBehaviour
     {
 
         if (_isHittedByEnemy) return;
+    
         _isHittedByEnemy = true;
         StartCoroutine(ResetDamageFlag());
 
         Debug.Log("Nilai Health before dikurangi 1 :" + _healthIntValue);
         _healthIntValue -= 1;
         Debug.Log("Nilai Health after dikurangi 1 :" + _healthIntValue);
+
+        if (_healthIntValue <= 0) { Debug.Log("Game Over -> You lose"); }
 
         _audioSourcePlayer.Play();
 
@@ -176,22 +187,17 @@ public class Player: MonoBehaviour
            transform.position = _respawnPoint.position;
         }
         else
-        {
-            _healthIntValue = 0;
-            Debug.Log("Game Over -> You lose");
-            //audioSourcePlayer.Play();
+        {         
 
-            //        Invoke(nameof(LoadNextScene), _delay);
-            SceneManager.LoadScene("LoseScene");
+            _healthIntValue = 0;
+          
+            
+            StartCoroutine(PauseThenLoadNext());
         }
 
         UpdateUI_HealthText();
     }
-
-  //  public void LoadNextScene()
-  //  {
-  //      SceneManager.LoadScene("LoseScene");
-  //  }
+       
 
     private IEnumerator ResetDamageFlag()
     {
@@ -199,7 +205,31 @@ public class Player: MonoBehaviour
         _isHittedByEnemy = false;
     }
 
-    
+    private IEnumerator PauseThenLoadNext()
+    {
+       
+
+        // Show pause screen
+        if (_pauseScreen != null)
+            _pauseScreen.SetActive(true);
+
+        // Pause gameplay but let audio continue
+        Time.timeScale = 0f;
+        AudioListener.pause = false; // ensure audio is not paused globally
+
+        // Wait in *real time* (ignores timescale)
+        yield return new WaitForSecondsRealtime(_pauseDuration);
+
+        // Restore time scale before loading next scene
+        Time.timeScale = 1f;
+
+        // Hide pause screen
+        if (_pauseScreen != null)
+            _pauseScreen.SetActive(false);
+
+        // Load next scene
+        SceneManager.LoadScene("LoseScene");
+    }
 
 
 

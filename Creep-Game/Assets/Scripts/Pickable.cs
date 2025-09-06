@@ -5,11 +5,13 @@ using UnityEngine;
 
 public class Pickable : MonoBehaviour
 {
-    [SerializeField]
-    public PickableType Pickabletype;
+    [SerializeField] public PickableType Pickabletype;
+    
+  
+   
 
     private bool _isPicked = false;
-
+    
 
     // Gunakan Action utk menghubungkan method 
     // OnPickablePicked yang ada di script PickableManager
@@ -26,8 +28,7 @@ public class Pickable : MonoBehaviour
             // panggil method OnPickablePicked yang ada di script PickableManager
             //OnPickedAction(this);
             OnPickedAction?.Invoke(this);
-            Debug.Log("Picked up ........: " + this);
-
+            
         }
         
     }

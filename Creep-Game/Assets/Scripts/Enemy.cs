@@ -8,34 +8,18 @@ public class Enemy : MonoBehaviour
     [SerializeField]
     public List<Transform> Waypoints = new List<Transform>();
 
-    [SerializeField]
-    public float ChaseDistance;
-    [SerializeField]
-    public Player Player;
-    [SerializeField]
-    private AudioSource _audioSourceEnemy;
+    [SerializeField]  public float ChaseDistance;
+    [SerializeField]  public Player Player;
+    [SerializeField]  private AudioSource _audioSourceEnemy;
 
     private BaseState _currentState;
 
-    [HideInInspector]
-    public PatrolState PatrolState = new PatrolState();
-    [HideInInspector]
-    public ChaseState ChaseState = new ChaseState();
-    [HideInInspector]
-    public RetreatState RetreatState = new RetreatState();
-    [HideInInspector]
-    public NavMeshAgent NavMeshAgent;
+    [HideInInspector] public PatrolState PatrolState = new PatrolState();
+    [HideInInspector] public ChaseState ChaseState = new ChaseState();
+    [HideInInspector] public RetreatState RetreatState = new RetreatState();
+    [HideInInspector] public NavMeshAgent NavMeshAgent;
+    [HideInInspector] public Animator EnemyAnimator;
 
-    [HideInInspector]
-    public Animator EnemyAnimator;
-
-    public void SwitchState(BaseState state)
-    {
-        _currentState.ExitState(this);
-        _currentState = state;
-        _currentState.EnterState(this);
-
-    }
 
     private void Awake()
     {
@@ -45,12 +29,9 @@ public class Enemy : MonoBehaviour
         // State awal enemy adalah patrol state.
         _currentState = PatrolState;
         _currentState.EnterState(this);
-
+   
         // init NavmeshAgent dari gameobject Enemy
-        NavMeshAgent = GetComponent<NavMeshAgent>();
-
-        
-
+        NavMeshAgent = GetComponent<NavMeshAgent>();      
     }
 
     private void Start()
@@ -61,12 +42,19 @@ public class Enemy : MonoBehaviour
             Player.OnPowerUpStop += StopRetreating;
         }
     }
+  public void SwitchState(BaseState state)
+    {
+        _currentState.ExitState(this);
+        _currentState = state;
+        _currentState.EnterState(this);
 
+    }
     private void Update()
     {
         if (_currentState != null)
         {
             _currentState.UpdateState(this);
+
         }
     }
 
@@ -74,17 +62,13 @@ public class Enemy : MonoBehaviour
     {
         if (enemy.Player != null)
         {
-            enemy.NavMeshAgent.destination = enemy.Player.transform.position;
-            if (Vector3.Distance(enemy.transform.position, enemy.Player.transform.position) > enemy.ChaseDistance)
-            {
-                enemy.SwitchState(enemy.PatrolState);
-            }
+                enemy.NavMeshAgent.destination = enemy.Player.transform.position;                        
         }
     }
 
     private void StartRetreating()
     {
-        SwitchState(RetreatState);
+         SwitchState(RetreatState);        
     }
 
     private void StopRetreating()
@@ -93,10 +77,8 @@ public class Enemy : MonoBehaviour
     }
 
     public void EnemyIsDead()
-    {
-        
+    {        
         Destroy(gameObject);
-        
     }
 
     private void OnCollisionEnter(Collision collisionObject)
@@ -104,10 +86,7 @@ public class Enemy : MonoBehaviour
         if (_currentState != RetreatState)
         {
             if (collisionObject.gameObject.CompareTag("Player"))
-            {
-                //_audioSourceEnemy.Play();
-                //_audioSourceEnemy.PlayOneShot(_audioSourceEnemy.clip);
-
+            {                
                 collisionObject.gameObject.GetComponent<Player>().PlayerIsDead();
             }
         }

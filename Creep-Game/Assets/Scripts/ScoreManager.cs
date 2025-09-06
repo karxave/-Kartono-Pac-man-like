@@ -6,11 +6,12 @@ using System;
 
 public class ScoreManager : MonoBehaviour
 {
-    [SerializeField]
-    private TMP_Text _scoreText;
+    [SerializeField] private TMP_Text _scoreText;
+    
     private int _scoreIntValue = 0;
     private int _maxScoreIntValue = 0;
 
+ 
     public void UpdateUI_scoreText()
     {
         Debug.Log(" UpdateUi_scoreText  --> _scoreIntValue :" + _scoreIntValue );
